@@ -3,6 +3,7 @@ Spectrum
 Spectrum is an image effect for MikuMikuDance, this is a very fast technique to achieve audio effect by using FFT texture
 
 ![Alt](https://raw.githubusercontent.com/MikuMikuShaders/Spectrum/master/Screenshots/preview.jpg)
+![Alt](https://raw.githubusercontent.com/MikuMikuShaders/Spectrum/master/Screenshots/preview1.jpg)
 
 Requirements:
 -----------
