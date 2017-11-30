@@ -20,18 +20,7 @@ static float waveBrightnessHigh = 1; // 0 ~ inf
 // S = 0 ~ 1	or G = 0 ~ inf
 // V = 0 ~ inf	or B = 0 ~ inf
 static float3 waveColorLow  = float3(0.0, 1.0, 1.0);
-
-// HSV or RGB
-// H = 0 ~ 1	or R = 0 ~ inf
-// S = 0 ~ 1	or G = 0 ~ inf
-// V = 0 ~ inf	or B = 0 ~ inf
 static float3 waveColorHigh = float3(0.6, 0.9, 1.0);
-
-// HSV or RGB
-// H = 0 ~ 1	or R = 0 ~ inf
-// S = 0 ~ 1	or G = 0 ~ inf
-// V = 0 ~ inf	or B = 0 ~ inf
-static float3 waveBlockColorBg  = float3(0.8, 1.0, 1.0);
 
 // Audio texture path
 #define FFT_MAP_FILE "Textures/fft.png"
