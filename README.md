@@ -14,8 +14,9 @@ Quickstart:
 -----------
 * Download a zip archive from the github page.
 * Un-zip the archive.
-* Put the the `WaveTiles.x` to the MMD window
-* Put the the `WaveTilesController.pmx` to the MMD window
+* Put the the `WaveTiles/WaveTiles.x` to the MMD window
+* Put the the `WaveTiles/WaveTilesController.pmx` to the MMD window
+* Load a `Experiment by IQ.wav` from `Media` Folder
 * Click `Play` Button
 
 How:
