@@ -8,6 +8,23 @@ Requirements:
 * MikuMikuEffect (Only tested on 037 version x64)
 * Direct3D 9 With Shader Model 3.0 (ps_3_0)
 
+Quickstart:
+-----------
+* Download a zip archive from the github page.
+* Un-zip the archive.
+* Put the the `WaveTiles.x` to the MMD window
+* Put the the `WaveTilesController.pmx` to the MMD window
+* Click `Play` Button
+
+How:
+-----------
+* Put a `Media/Experiment by IQ.wav` to the `Tools` Folder
+* Drag and drop the `wav` onto `run.exe`
+* Wait for output of image
+* You'll get a `Experiment by IQ.wav.fft.png` from the `Tools` folder
+* Rename it to `fft.png`
+* Copy and phase `png` to `WaveTiles/Textures` instead of old texture
+
 Contact:
 ------------
 　　If you are a developer using this as part of your love and considering contacting me, you can submit code by `Pull requests` or Feel free to contact me via `twitter` and `issues`, i'll add your profile to team members.
