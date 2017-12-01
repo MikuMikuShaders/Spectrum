@@ -61,7 +61,7 @@ static float mIntensity = lerp(lerp(0.01, 0.1, mIntensityP), 0.0, mIntensityM);
 
 static float2 mSize = 1.0 - float2(mSizeX, mSizeY);
 static float2 mTranslate = float2(mPositionXP, mPositionYP) - float2(mPositionXM, mPositionYM);
-static float3 mColorAll = float3(mColorH, mColorS, mColorV);
+static float3 mColorAll = float3(mColorH, mColorS, mColorV * 0.5);
 #endif
 
 texture SpectrumMap<string ResourceName = FFT_MAP_FILE;>; 
@@ -120,7 +120,7 @@ float4 SoundSpectrumPS(in float2 coord : TEXCOORD0) : COLOR
 
 	float2 wave = smoothstep(mTranslate, mTranslate + mSize, coord) * 2 - 1;
 
-	float3 color = 0;
+	float4 color = 0;
 
 	for (int i = 0.0 ; i < NUM_SAMPLES ; i++)
 	{
@@ -132,11 +132,15 @@ float4 SoundSpectrumPS(in float2 coord : TEXCOORD0) : COLOR
 		float S = mColorAll.y;
 		float V = (mColorAll.z / NUM_SAMPLES + freq) / dist;
 
-		color += hsv2rgb(float3(H, S, V));
+		color.rgb += hsv2rgb(float3(H, S, V));
+		color.a += V;
 	}
 	
 	float3 screen = tex2Dlod(ScnSamp, float4(coord, 0, 0)).xyz;
-	return float4(screen + color, 1);
+	screen = lerp(screen, color.rgb, saturate(color.a));
+	screen += color.rgb;
+
+	return float4(screen, 1);
 }
 
 float Script : STANDARDSGLOBAL <
