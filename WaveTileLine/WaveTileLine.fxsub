@@ -110,12 +110,12 @@ float2 GetFramesPerSecond(float time, float size = FFT_SIZE, float uniforms = FF
 
 float GetFramesFreq(float2 coord, float samples, float size = FFT_SIZE, float uniforms = FFT_UNIFORM)
 {
-	float n = samples * 255;
+	int n = samples * (uniforms * 4 - 1);
 
-	int x = int(n / 4);
+	int x = int(floor(n / 4));
 	int y = int(fmod(n, 4));
 
-	float2 lookup = coord + x * float2(0, 1.0 / FFT_SIZE);
+	float2 lookup = coord + x * float2(0, 1.0 / size);
 	float4 freqs = tex2Dlod(SpectrumMapSamp, float4(lookup, 0, 0));
 
 	return freqs[y];
