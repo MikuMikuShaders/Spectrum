@@ -31,6 +31,8 @@ static float mIntensity = intensity;
 
 static float mSpinCos = spinCos;
 static float mSpinSin = spinSin;
+
+static float mJitter = jitter;
 #else
 float mPositionXP : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "PosX+";>;
 float mPositionYP : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "PosY+";>;
@@ -48,6 +50,7 @@ float mSpinCosP : CONTROLOBJECT<string name="WaveCircleController.pmx"; string i
 float mSpinCosM : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "SpinCos-";>;
 float mSpinSinP : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "SpinSin+";>;
 float mSpinSinM : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "SpinSin-";>;
+float mJitterP : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "Jitter";>;
 
 float mColorH : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "ColorAllH+";>;
 float mColorS : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "ColorAllS+";>;
@@ -55,6 +58,7 @@ float mColorV : CONTROLOBJECT<string name="WaveCircleController.pmx"; string ite
 
 static float mSpinCos = lerp(lerp(1, 5, mSpinCosP), 0, mSpinCosM);
 static float mSpinSin = lerp(lerp(1, 0, mSpinSinP), 0, mSpinSinM);
+static float mJitter = lerp(1, 100, mJitterP);
 
 static float mRadius = lerp(lerp(0.3, 0.6, mRadiusP), 0.0, mRadiusM);
 static float mIntensity = lerp(lerp(0.01, 0.1, mIntensityP), 0.0, mIntensityM);
@@ -126,7 +130,7 @@ float4 SoundSpectrumPS(in float2 coord : TEXCOORD0) : COLOR
 	{
 		float freq = GetFramesFreq(index, i / float(NUM_SAMPLES) + time) * mIntensity;
 		float rotate = float(i) / NUM_SAMPLES * PI_2;
-		float dist = distance(wave, float2(cos(rotate * mSpinCos + time), sin(rotate * mSpinSin + time * 2.0 / 3.0)) * mRadius);
+		float dist = distance(wave, float2(cos(rotate * mSpinCos + time), sin(rotate * mSpinSin + time * 2.0 / 3.0)) * mRadius * (1 + freq * mJitter));
 
 		float H = lerp(0, mColorAll.x, i / float(NUM_SAMPLES)) + time;
 		float S = mColorAll.y;

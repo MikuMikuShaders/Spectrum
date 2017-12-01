@@ -10,8 +10,10 @@ static float2 position = 0.0; 	// -1.0 ~ 1.0
 static float radius = 0.3;
 static float intensity = 0.01;
 
-static float spinCos = 1.0; 	// any
-static float spinSin = 1.0; 	// any
+static float spinCos = 1.0; // any
+static float spinSin = 1.0; // any
+
+static float jitter = 0.0; 	// 0 ~ 100 and above
 
 // HSV
 // H = 0 ~ 1
