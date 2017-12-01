@@ -128,7 +128,7 @@ float4 SoundSpectrumPS(in float2 coord : TEXCOORD0) : COLOR
 		float rotate = float(i) / NUM_SAMPLES * PI_2;
 		float dist = distance(wave, float2(cos(rotate * mSpinCos + time), sin(rotate * mSpinSin + time * 2.0 / 3.0)) * mRadius);
 
-		float H = i / float(NUM_SAMPLES) + time + mColorAll.x;
+		float H = lerp(0, mColorAll.x, i / float(NUM_SAMPLES)) + time;
 		float S = mColorAll.y;
 		float V = (mColorAll.z / NUM_SAMPLES + freq) / dist;
 
