@@ -22,7 +22,6 @@ sampler ScnSamp = sampler_state {
 };
 
 #if USE_CUSTOM_PARAMS
-static float2 mSize = size;
 static float2 mTranslate = position;
 static float3 mColorAll = colorAll;
 
@@ -38,8 +37,6 @@ float mPositionXP : CONTROLOBJECT<string name="WaveCircleController.pmx"; string
 float mPositionYP : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "PosY+";>;
 float mPositionXM : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "PosX-";>;
 float mPositionYM : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "PosY-";>;
-float mSizeX : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "SizeW-";>;
-float mSizeY : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "SizeH-";>;
 
 float mRadiusP : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "Radius+";>;
 float mRadiusM : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "Radius-";>;
@@ -63,7 +60,6 @@ static float mJitter = lerp(1, 100, mJitterP);
 static float mRadius = lerp(lerp(0.3, 0.6, mRadiusP), 0.0, mRadiusM);
 static float mIntensity = lerp(lerp(0.01, 0.1, mIntensityP), 0.0, mIntensityM);
 
-static float2 mSize = 1.0 - float2(mSizeX, mSizeY);
 static float2 mTranslate = float2(mPositionXP, mPositionYP) - float2(mPositionXM, mPositionYM);
 static float3 mColorAll = float3(mColorH, mColorS, mColorV * 0.5);
 #endif
@@ -122,7 +118,7 @@ float4 SoundSpectrumPS(in float2 coord : TEXCOORD0) : COLOR
 {
 	float2 index = GetFramesPerSecond(time);
 
-	float2 wave = smoothstep(mTranslate, mTranslate + mSize, coord) * 2 - 1;
+	float2 wave = smoothstep(mTranslate, mTranslate + 1.0, coord) * 2 - 1;
 
 	float4 color = 0;
 
