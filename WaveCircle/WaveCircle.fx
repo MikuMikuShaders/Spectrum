@@ -4,15 +4,15 @@
 // How much dots
 #define NUM_SAMPLES 32
 
-static float radius = 0.3;
+static float radius = 0.3;		//  0.0 ~ 1.0 and above
 static float2 position = 0.0; 	// -1.0 ~ 1.0
 
-static float intensity = 0.01;
+static float intensity = 0.2;	// any
 
-static float spinCos = 1.0; // any
-static float spinSin = 1.0; // any
+static float spinCos = 1.0; 	// any
+static float spinSin = 1.0; 	// any
 
-static float jitter = 0.0; 	// 0 ~ 100 and above
+static float jitter = 0.0; 		// 0 ~ 100 and above
 
 // HSV
 // H = 0 ~ 1

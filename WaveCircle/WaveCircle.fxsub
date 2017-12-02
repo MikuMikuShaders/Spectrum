@@ -55,10 +55,10 @@ float mColorV : CONTROLOBJECT<string name="WaveCircleController.pmx"; string ite
 
 static float mSpinCos = lerp(lerp(1, 5, mSpinCosP), 0, mSpinCosM);
 static float mSpinSin = lerp(lerp(1, 0, mSpinSinP), 0, mSpinSinM);
-static float mJitter = lerp(1, 100, mJitterP);
+static float mJitter = lerp(0, 100, mJitterP);
 
 static float mRadius = lerp(lerp(0.3, 0.6, mRadiusP), 0.0, mRadiusM);
-static float mIntensity = lerp(lerp(0.01, 0.1, mIntensityP), 0.0, mIntensityM);
+static float mIntensity = lerp(lerp(0.2, 1.0, mIntensityP), 0.0, mIntensityM);
 
 static float2 mTranslate = float2(mPositionXP, mPositionYP) - float2(mPositionXM, mPositionYM);
 static float3 mColorAll = float3(mColorH, mColorS, mColorV * 0.5);
@@ -130,7 +130,7 @@ float4 SoundSpectrumPS(in float2 coord : TEXCOORD0) : COLOR
 
 		float H = lerp(0, mColorAll.x, i / float(NUM_SAMPLES)) + time;
 		float S = mColorAll.y;
-		float V = (mColorAll.z / NUM_SAMPLES + freq) / dist;
+		float V = (mColorAll.z + freq) / dist / NUM_SAMPLES;
 
 		color.rgb += hsv2rgb(float3(H, S, V));
 		color.a += V;
