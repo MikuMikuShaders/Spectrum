@@ -85,6 +85,23 @@ static float3 mWaveColorHigh = float3(mColorHighH, mColorHighS, lerp(lerp(1, 2, 
 static float3 mWaveColorBg = float3(mBlockColorH, mBlockColorS, lerp(lerp(1, 2, mBlockColorP), 0, mBlockColorM));
 #endif
 
+float3 noise3(float2 seed)
+{
+	return frac(sin(dot(seed.xy, float2(34.483, 89.637))) * float3(29156.4765, 38273.5639, 47843.7546));
+}
+
+float3 ColorBanding(float2 uv)
+{
+	float3 noise = noise3(uv) + noise3(uv + 0.5789) - 0.5;
+	return noise / 255.0;
+}
+
+float3 ColorDithering(float3 color, float2 uv)
+{
+	color += ColorBanding(uv);
+	return color;
+}
+
 float3 hsv2rgb(float3 c)
 {
 	float4 K = float4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
@@ -176,7 +193,7 @@ float4 SoundSpectrumPS(in float2 coord : TEXCOORD0) : COLOR
 	color += lerp(screen, bg.rgb * front.rgb, bg.a * saturate(front.a));
 	color += front.rgb * front.a;
     
-	return float4(color, 1);
+	return float4(ColorDithering(color, coord), 1);
 }
 
 float Script : STANDARDSGLOBAL <

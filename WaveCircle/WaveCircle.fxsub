@@ -72,6 +72,23 @@ sampler SpectrumMapSamp = sampler_state
 	AddressU = CLAMP; AddressV = CLAMP;
 };
 
+float3 noise3(float2 seed)
+{
+	return frac(sin(dot(seed.xy, float2(34.483, 89.637))) * float3(29156.4765, 38273.5639, 47843.7546));
+}
+
+float3 ColorBanding(float2 uv)
+{
+	float3 noise = noise3(uv) + noise3(uv + 0.5789) - 0.5;
+	return noise / 255.0;
+}
+
+float3 ColorDithering(float3 color, float2 uv)
+{
+	color += ColorBanding(uv);
+	return color;
+}
+
 float3 hsv2rgb(float3 c)
 {
 	float4 K = float4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
@@ -140,7 +157,7 @@ float4 SoundSpectrumPS(in float2 coord : TEXCOORD0) : COLOR
 	screen = lerp(screen, color.rgb, saturate(color.a));
 	screen += color.rgb;
 
-	return float4(screen, 1);
+	return float4(ColorDithering(screen, coord), 1);
 }
 
 float Script : STANDARDSGLOBAL <
