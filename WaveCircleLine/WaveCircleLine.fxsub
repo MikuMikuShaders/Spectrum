@@ -30,42 +30,38 @@ static float2 mTranslate = position;
 static float3 mColorAll = colorAll;
 
 static float mRadius = radius;
+static float mWidth = width;
 static float mIntensity = intensity;
 
-static float mSpinCos = spinCos;
-static float mSpinSin = spinSin;
-
-static float mJitter = jitter;
+static float mColorTile = colorTile;
+static float mColorTime = colorTime;
 #else
-float mPositionXP : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "PosX+";>;
-float mPositionYP : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "PosY+";>;
-float mPositionXM : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "PosX-";>;
-float mPositionYM : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "PosY-";>;
+float mPositionXP : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "PosX+";>;
+float mPositionYP : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "PosY+";>;
+float mPositionXM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "PosX-";>;
+float mPositionYM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "PosY-";>;
 
-float mRadiusP : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "Radius+";>;
-float mRadiusM : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "Radius-";>;
-float mIntensityP : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "Intensity+";>;
-float mIntensityM : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "Intensity-";>;
+float mWidthP : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Width+";>;
+float mWidthM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Width-";>;
+float mRadiusP : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Radius+";>;
+float mRadiusM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Radius-";>;
+float mIntensityP : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Intensity+";>;
+float mIntensityM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Intensity-";>;
 
-float mSpinCosP : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "SpinCos+";>;
-float mSpinCosM : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "SpinCos-";>;
-float mSpinSinP : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "SpinSin+";>;
-float mSpinSinM : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "SpinSin-";>;
-float mJitterP : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "Jitter";>;
+float mColorAllH : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "ColorAllH+";>;
+float mColorAllS : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "ColorAllS+";>;
+float mColorAllV : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "ColorAllV-";>;
+float mColorTileH : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "ColorTileH+";>;
+float mColorTimeH : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "ColorTimeH+";>;
 
-float mColorH : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "ColorAllH+";>;
-float mColorS : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "ColorAllS+";>;
-float mColorV : CONTROLOBJECT<string name="WaveCircleController.pmx"; string item = "ColorAllV+";>;
-
-static float mSpinCos = lerp(lerp(1, 5, mSpinCosP), 0, mSpinCosM);
-static float mSpinSin = lerp(lerp(1, 0, mSpinSinP), 0, mSpinSinM);
-static float mJitter = lerp(0, 100, mJitterP);
-
-static float mRadius = lerp(lerp(0.3, 0.6, mRadiusP), 0.0, mRadiusM);
-static float mIntensity = lerp(lerp(0.2, 1.0, mIntensityP), 0.0, mIntensityM);
+static float mWidth = lerp(lerp(0.4, 1.0, mWidthP), 0.0, mWidthM);
+static float mRadius = lerp(lerp(0.4, 1.0, mRadiusP), 0.0, mRadiusM);
+static float mIntensity = lerp(lerp(1.0, 2.0, mIntensityP), 0.0, mIntensityM);
+static float mColorTile = mColorTileH;
+static float mColorTime = mColorTimeH;
 
 static float2 mTranslate = float2(mPositionXP, mPositionYP) - float2(mPositionXM, mPositionYM);
-static float3 mColorAll = float3(mColorH, mColorS, mColorV * 0.5);
+static float3 mColorAll = float3(mColorAllH, mColorAllS, 1 - mColorAllV);
 #endif
 
 texture SpectrumMap<string ResourceName = FFT_MAP_FILE;>; 
@@ -95,7 +91,7 @@ float2 GetFramesPerSecond(float time, float size = FFT_SIZE, float uniforms = FF
 
 float GetFramesFreq(float2 coord, float samples, float size = FFT_SIZE, float uniforms = FFT_UNIFORM)
 {
-	float n = (sin(samples * PI) * 0.5 + 0.5) * 256;
+	float n = samples * 255;
 
 	int x = int(n / 4);
 	int y = int(fmod(n, 4));
@@ -120,34 +116,36 @@ void SoundSpectrumVS(
 
 float4 SoundSpectrumPS(in float2 coord : TEXCOORD0) : COLOR 
 {
-	float2 index = GetFramesPerSecond(time);
+	float2 wave = coord * 2 - 1;
+	wave.x *= ViewportAspect;
 
-	float2 wave = smoothstep(mTranslate, mTranslate + 1.0, coord) * 2 - 1;
+    float angle = frac((atan2(wave.y, wave.x) / PI_2) - time / 100);
+    float i = floor(angle * NUM_SAMPLES) / NUM_SAMPLES;
+    float f = frac(angle * NUM_SAMPLES);
 
-	float4 color = 0;
+    float fft = GetFramesFreq(GetFramesPerSecond(time), i);
+	float freq = fft * fft * mIntensity;
 
-	for (int i = 0.0 ; i < NUM_SAMPLES ; i++)
-	{
-		float freq = GetFramesFreq(index, i / float(NUM_SAMPLES) + time) * mIntensity;
-		float rotate = float(i) / NUM_SAMPLES * PI_2;
-		float dist = distance(wave, float2(cos(rotate * mSpinCos + time), sin(rotate * mSpinSin + time * 2.0 / 3.0)) * mRadius * (1 + freq * mJitter));
+    float dist = distance(mTranslate, wave);
 
-		float H = lerp(0, mColorAll.x, i / float(NUM_SAMPLES)) + time;
-		float S = mColorAll.y;
-		float V = (mColorAll.z + freq) / dist / NUM_SAMPLES;
+    float mask = smoothstep(mWidth, mWidth + 0.1, f);
+    mask = max(mask, smoothstep(0.1, 0.0, f));
+    mask = max(mask, 1.0 - smoothstep(mRadius, mRadius + 0.01, dist));
+    mask = max(mask, smoothstep(mRadius + freq, mRadius + freq + 0.01, dist));
+    mask = 1 - mask;
 
-		color.rgb += hsv2rgb(float3(H, S, V));
-		color.a += V;
-	}
+	float H = mColorAll.x + mColorTile.x * i + mColorTime.x * time;
+	float S = mColorAll.y;
+	float V = mColorAll.z;
 	
+	float3 color = hsv2rgb(float3(H, S, V));
 	float3 screen = tex2Dlod(ScnSamp, float4(coord, 0, 0)).xyz;
-	screen = lerp(screen, color.rgb, saturate(color.a));
-	screen += color.rgb;
+	screen = lerp(screen, color.rgb, saturate(mask));
 
 	return float4(screen, 1);
 }
 
-float Script : STANDARDSGLOBAL <
+float Script : STANDARDSGLOBAL<
 	string ScriptOutput = "color";
 	string ScriptClass  = "scene";
 	string ScriptOrder  = "postprocess";
@@ -169,7 +167,7 @@ technique MainTech<
 	"RenderColorTarget=;"
 	"Pass=SoundSpectrum;"
 ;>{
-	pass SoundSpectrum < string Script= "Draw=Buffer;"; > {
+	pass SoundSpectrum<string Script= "Draw=Buffer;";>{
 		AlphaBlendEnable = false; AlphaTestEnable = false;
 		ZEnable = False; ZWriteEnable = False;
 		VertexShader = compile vs_3_0 SoundSpectrumVS();

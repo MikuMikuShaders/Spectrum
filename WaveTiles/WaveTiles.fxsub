@@ -220,7 +220,7 @@ const float ClearDepth  = 1.0;
 
 technique MainTech<
 	string Script = 
-	"RenderColorTarget0=ScnMap;"
+	"RenderColorTarget=ScnMap;"
 	"RenderDepthTarget=DepthBuffer;"
 	"ClearSetColor=ClearColor;"
 	"ClearSetDepth=ClearDepth;"
