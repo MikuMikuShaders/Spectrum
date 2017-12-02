@@ -6,6 +6,7 @@ Spectrum is an image effect for MikuMikuDance, this is a very fast technique to 
 ![Alt](https://raw.githubusercontent.com/MikuMikuShaders/Spectrum/master/Screenshots/preview2.jpg)
 ![Alt](https://raw.githubusercontent.com/MikuMikuShaders/Spectrum/master/Screenshots/preview3.jpg)
 ![Alt](https://raw.githubusercontent.com/MikuMikuShaders/Spectrum/master/Screenshots/preview4.jpg)
+![Alt](https://raw.githubusercontent.com/MikuMikuShaders/Spectrum/master/Screenshots/preview5.jpg)
 
 Requirements:
 -----------
