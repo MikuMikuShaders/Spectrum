@@ -119,7 +119,7 @@ float4 SoundSpectrumPS(in float2 coord : TEXCOORD0) : COLOR
 	float2 wave = coord * 2 - 1;
 	wave.x *= ViewportAspect;
 
-    float angle = frac((atan2(wave.y, wave.x) / PI_2) - time / 100);
+    float angle = frac((atan2(wave.y - mTranslate.y, wave.x - mTranslate.x) / PI_2) - time / 100);
     float i = floor(angle * NUM_SAMPLES) / NUM_SAMPLES;
     float f = frac(angle * NUM_SAMPLES);
 
