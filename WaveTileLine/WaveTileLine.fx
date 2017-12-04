@@ -2,7 +2,7 @@
 #define USE_RGB_SPACE 0
 
 // use below params instead of controller.pmx
-#define USE_CUSTOM_PARAMS 1
+#define USE_CUSTOM_PARAMS 0
 
 static float rotation = 0; // 0 ~ 360
 
