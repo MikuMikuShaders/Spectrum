@@ -4,7 +4,9 @@
 // use below params instead of controller.pmx
 #define USE_CUSTOM_PARAMS 0
 
-static float2 size = float2(1.0, 1.0); // 0 ~ 1
+static float rotation = 0; // 0 ~ 360
+
+static float2 size = 1.0; // 0 ~ 1
 static float2 position = 0.0; // 0 ~ 1
 
 static float waveHeight = 1;  // 1 ~ 2

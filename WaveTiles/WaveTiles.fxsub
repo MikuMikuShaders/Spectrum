@@ -1,6 +1,9 @@
 #define FFT_SIZE 1024
 #define FFT_UNIFORM 64
 
+#define PI 3.141592654
+#define PI_2 (3.141592654 * 2)
+
 float time : TIME<bool SyncInEditMode=true;>;
 
 float2 ViewportSize : VIEWPORTPIXELSIZE;
@@ -35,6 +38,8 @@ static float mWaveFade = waveBorderFade;
 static float mWaveBlockNumX = waveBlockNumX;
 static float mWaveBlockNumY = waveBlockNumY;
 
+static float mRotation = radians(rotation);
+
 static float2 mSize = size;
 static float2 mTranslate = position;
 
@@ -52,6 +57,7 @@ float mSizeXP : CONTROLOBJECT<string name="WaveTilesController.pmx"; string item
 float mSizeYP : CONTROLOBJECT<string name="WaveTilesController.pmx"; string item = "SizeH+";>;
 float mSizeXM : CONTROLOBJECT<string name="WaveTilesController.pmx"; string item = "SizeW-";>;
 float mSizeYM : CONTROLOBJECT<string name="WaveTilesController.pmx"; string item = "SizeH-";>;
+float mRotationP : CONTROLOBJECT<string name="WaveTilesController.pmx"; string item = "Rotation";>;
 
 float mWaveHeightP : CONTROLOBJECT<string name="WaveTilesController.pmx"; string item = "WaveHeight+";>;
 float mWaveHeightM : CONTROLOBJECT<string name="WaveTilesController.pmx"; string item = "WaveHeight-";>;
@@ -82,8 +88,9 @@ static float mWaveBlockNumY = lerp(lerp(100, 200, mBlockNumYP), 1, mBlockNumYM);
 static float mBrightnessLow = lerp(lerp(0.3, 2, mBrightnessLowP), 0, mBrightnessLowM);
 static float mBrightnessHigh = lerp(lerp(1, 2, mBrightnessHighP), 0, mBrightnessHighM);
 
+static float mRotation = lerp(0, PI_2, mRotationP);
 static float2 mSize = lerp(lerp(1.0, 2.0, float2(mSizeXP, mSizeYP)), 0.0, float2(mSizeXM, mSizeYM));
-static float2 mTranslate = float2(mPositionXP, mPositionYP) - float2(mPositionXM, mPositionYM);
+static float2 mTranslate = lerp(lerp(0.0, 4.0, float2(mPositionXP, mPositionYP)), -4.0, float2(mPositionXM, mPositionYM));
 
 #if USE_RGB_SPACE
 static float3 mWaveColorLow = float3(mBlockColorLowH, mBlockColorLowS, mBlockColorLowV);
@@ -193,9 +200,14 @@ void SoundSpectrumVS(
 	oTexcoord.zw = Texcoord.xy * ViewportSize;
 	oTexcoord.xy += ViewportOffset.xy;
 
+	float c = cos(mRotation);
+	float s = sin(mRotation);
+
 	oPosition = Position;
-	oPosition.xy += mTranslate;
 	oPosition.xy *= mSize;
+	oPosition.xy = float2(oPosition.x * c - oPosition.y * s, oPosition.x * s + oPosition.y * c);
+	oPosition.x /= ViewportAspect;
+	oPosition.xy += mTranslate;
 }
 
 float4 SoundSpectrumPS(in float2 coord : TEXCOORD0) : COLOR 
