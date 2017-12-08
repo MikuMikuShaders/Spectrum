@@ -10,8 +10,8 @@ Spectrum is an image effect for MikuMikuDance, this is a very fast technique to 
 
 Requirements:
 -----------
-* MikuMikuDance (Only tested on 926 version x64)
-* MikuMikuEffect (Only tested on 037 version x64)
+* MikuMikuDance (Only tested on 926 version x64 and 739 version x32)
+* MikuMikuEffect (Only tested on 037 version)
 * Direct3D 9 With Shader Model 3.0 (ps_3_0)
 
 Quickstart:
