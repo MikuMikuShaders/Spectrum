@@ -1,0 +1,175 @@
+#define FFT_SIZE 1024
+#define FFT_UNIFORM 64
+
+#define PI 3.141592654
+#define PI_2 (3.141592654 * 2)
+
+float time : TIME<bool SyncInEditMode=true;>;
+
+float4x4 matWorld              : WORLD;
+float4x4 matWorldInverse       : WORLDINVERSE;
+float4x4 matWorldView          : WORLDVIEW;
+float4x4 matWorldViewProject   : WORLDVIEWPROJECTION;
+float4x4 matView               : VIEW;
+float4x4 matViewInverse        : VIEWINVERSE;
+float4x4 matProject            : PROJECTION;
+float4x4 matProjectInverse     : PROJECTIONINVERSE;
+float4x4 matViewProject        : VIEWPROJECTION;
+float4x4 matViewProjectInverse : VIEWPROJECTIONINVERSE;
+
+float2 ViewportSize : VIEWPORTPIXELSIZE;
+static float2 ViewportOffset  = (float2(0.5,0.5) / ViewportSize);
+static float2 ViewportOffset2 = (float2(1.0,1.0) / ViewportSize);
+static float  ViewportAspect  = ViewportSize.x / ViewportSize.y;
+
+texture ScnMap : RENDERCOLORTARGET <
+	float2 ViewPortRatio = {1.0,1.0};
+	string Format = "R8G8B8";
+>;
+sampler ScnSamp = sampler_state {
+	texture = <ScnMap>;
+	MinFilter = POINT; MagFilter = POINT; MipFilter = NONE;
+	AddressU = CLAMP; AddressV = CLAMP;
+};
+texture DepthBuffer : RENDERDEPTHTARGET<
+	float2 ViewportRatio = {1.0,1.0};
+	string Format = "D16";
+>;
+
+#if USE_CUSTOM_PARAMS
+static float3 mColorAll = colorAll;
+
+static float mRadius = radius;
+static float mWide = wide;
+static float mAlpha = alpha;
+static float mIntensity = intensity;
+
+static float mColorTile = colorTile;
+static float mColorTime = colorTime;
+#else
+float mPositionXP : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "PosX+";>;
+float mPositionYP : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "PosY+";>;
+float mPositionXM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "PosX-";>;
+float mPositionYM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "PosY-";>;
+
+float mWideP : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Wide+";>;
+float mWideM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Wide-";>;
+float mRadiusP : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Radius+";>;
+float mRadiusM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Radius-";>;
+float mAlphaM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Alpha";>;
+float mIntensityP : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Intensity+";>;
+float mIntensityM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Intensity-";>;
+
+float mColorAllH : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "ColorAllH+";>;
+float mColorAllS : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "ColorAllS+";>;
+float mColorAllV : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "ColorAllV-";>;
+float mColorTileH : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "ColorTileH+";>;
+float mColorTimeH : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "ColorTimeH+";>;
+
+static float mWide = lerp(lerp(0.4, 1.0, mWideP), 0.0, mWideM);
+static float mAlpha = lerp(1.0, 0.0, mAlphaM);
+static float mRadius = lerp(lerp(0.4, 1.0, mRadiusP), 0.0, mRadiusM);
+static float mIntensity = lerp(lerp(1.0, 2.0, mIntensityP), 0.0, mIntensityM);
+static float mColorTile = mColorTileH;
+static float mColorTime = mColorTimeH;
+
+static float2 mTranslate = float2(mPositionXP, mPositionYP) - float2(mPositionXM, mPositionYM);
+static float3 mColorAll = float3(mColorAllH, mColorAllS, 1 - mColorAllV);
+#endif
+
+texture SpectrumMap<string ResourceName = FFT_MAP_FILE;>; 
+sampler SpectrumMapSamp = sampler_state
+{
+	texture = <SpectrumMap>;
+	MinFilter = POINT; MagFilter = POINT; MipFilter = NONE;
+	AddressU = CLAMP; AddressV = CLAMP;
+};
+
+float3 hsv2rgb(float3 c)
+{
+	float4 K = float4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+	float3 p = abs(frac(c.xxx + K.xyz) * 6.0 - K.www);
+	return c.z * lerp(K.xxx, saturate(p - K.xxx), c.y);
+}
+
+float2 GetFramesPerSecond(float time, float size = FFT_SIZE, float uniforms = FFT_UNIFORM)
+{
+	float frame = time / 8.5 * 255;
+
+	float y = floor(frame / size);
+	float x = frame - y * size;
+
+	return float2(x, y * uniforms) / size;
+}
+
+float GetFramesFreq(float2 coord, float samples, float size = FFT_SIZE, float uniforms = FFT_UNIFORM)
+{
+	float n = samples * 255;
+
+	int x = int(n / 4);
+	int y = int(fmod(n, 4));
+
+	float2 lookup = coord + x * float2(0, 1.0 / FFT_SIZE);
+	float4 freqs = tex2Dlod(SpectrumMapSamp, float4(lookup, 0, 0));
+
+	return freqs[y];
+}
+
+void SoundSpectrumVS(
+	in float4 Position : POSITION,
+	in float4 Texcoord : TEXCOORD0,
+	out float4 oTexcoord  : TEXCOORD0,
+	out float4 oPosition  : POSITION)
+{
+	oTexcoord = Texcoord;
+	oTexcoord.zw = Texcoord.xy * ViewportSize;
+	oTexcoord.xy += ViewportOffset.xy;
+	oPosition = mul(Position, matViewProject);
+}
+
+float4 SoundSpectrumPS(in float2 coord : TEXCOORD0) : COLOR 
+{
+	float2 wave = coord * 2 - 1;
+
+    float angle = frac((atan2(wave.y, wave.x) / PI_2) - time / 100);
+    float i = floor(angle * NUM_SAMPLES) / NUM_SAMPLES;
+    float f = frac(angle * NUM_SAMPLES);
+
+    float fft = GetFramesFreq(GetFramesPerSecond(time), i);
+	float freq = fft * fft * mIntensity;
+
+    float dist = distance(0.0, wave);
+
+    float mask = smoothstep(mWide, mWide + 0.1, f);
+    mask = max(mask, smoothstep(0.1, 0.0, f));
+    mask = max(mask, 1.0 - smoothstep(mRadius, mRadius + 0.01, dist));
+    mask = max(mask, smoothstep(mRadius + freq, mRadius + freq + 0.01, dist));
+    mask = 1 - mask;
+
+	float H = mColorAll.x + mColorTile.x * i + mColorTime.x * time;
+	float S = mColorAll.y;
+	float V = mColorAll.z;
+	
+	float3 color = hsv2rgb(float3(H, S, V));
+	clip(mask - 1e-5);
+
+	return float4(color, mAlpha);
+}
+
+#define OBJECT_TEC(name, mmdpass)\
+	technique name<string MMDPass = mmdpass;\
+	>{\
+		pass DrawObject {\
+			AlphaTestEnable = FALSE; AlphaBlendEnable = true;\
+			CullMode = NONE;\
+			VertexShader = compile vs_3_0 SoundSpectrumVS();\
+			PixelShader = compile ps_3_0 SoundSpectrumPS();\
+		}\
+	}
+
+OBJECT_TEC(MainTec0, "object")
+OBJECT_TEC(MainTecBS0, "object_ss")
+
+technique EdgeTec<string MMDPass = "edge";>{}
+technique ZplotTec<string MMDPass = "zplot";>{}
+technique ShadowTech<string MMDPass = "shadow";>{}
