@@ -29,8 +29,10 @@ texture DepthBuffer : RENDERDEPTHTARGET<
 static float2 mTranslate = position;
 static float3 mColorAll = colorAll;
 
-static float mRadius = radius;
+static float mAlpha = alpha;
+static float mSpeed = speed;
 static float mWidth = width;
+static float mRadius = radius;
 static float mIntensity = intensity;
 
 static float mColorTile = colorTile;
@@ -47,6 +49,9 @@ float mRadiusP : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; strin
 float mRadiusM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Radius-";>;
 float mIntensityP : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Intensity+";>;
 float mIntensityM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Intensity-";>;
+float mSpeedP : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Speed+";>;
+float mSpeedM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Speed-";>;
+float mAlphaM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Alpha";>;
 
 float mColorAllH : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "ColorAllH+";>;
 float mColorAllS : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "ColorAllS+";>;
@@ -54,6 +59,8 @@ float mColorAllV : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; str
 float mColorTileH : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "ColorTileH+";>;
 float mColorTimeH : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "ColorTimeH+";>;
 
+static float mAlpha = lerp(1.0, 0.0, mAlphaM);
+static float mSpeed = lerp(lerp(1.0, 10.0, mSpeedP), 0.0, mSpeedM);
 static float mWidth = lerp(lerp(0.4, 1.0, mWidthP), 0.0, mWidthM);
 static float mRadius = lerp(lerp(0.4, 1.0, mRadiusP), 0.0, mRadiusM);
 static float mIntensity = lerp(lerp(1.0, 2.0, mIntensityP), 0.0, mIntensityM);
@@ -119,7 +126,7 @@ float4 SoundSpectrumPS(in float2 coord : TEXCOORD0) : COLOR
 	float2 wave = coord * 2 - 1;
 	wave.x *= ViewportAspect;
 
-    float angle = frac((atan2(wave.y - mTranslate.y, wave.x - mTranslate.x) / PI_2) - time / 100);
+    float angle = frac((atan2(wave.y - mTranslate.y, wave.x - mTranslate.x) / PI_2) - time / 100 * mSpeed);
     float i = floor(angle * NUM_SAMPLES) / NUM_SAMPLES;
     float f = frac(angle * NUM_SAMPLES);
 
@@ -140,9 +147,9 @@ float4 SoundSpectrumPS(in float2 coord : TEXCOORD0) : COLOR
 	
 	float3 color = hsv2rgb(float3(H, S, V));
 	float3 screen = tex2Dlod(ScnSamp, float4(coord, 0, 0)).xyz;
-	screen = lerp(screen, color.rgb, saturate(mask));
+	screen = lerp(screen, color.rgb, saturate(mask) * mAlpha);
 
-	return float4(screen, 1);
+	return float4(screen, mAlpha);
 }
 
 float Script : STANDARDSGLOBAL<

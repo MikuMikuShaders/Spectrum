@@ -6,7 +6,8 @@
 
 static float radius = 0.4;		//  0.0 ~ 1.0 and above
 
-static float alpha = 1.0;
+static float alpha = 1.0;		//  0.0 ~ 1.0
+static float speed = 1.0;		//  any
 static float wide = 0.4;		//  0.0 ~ 1.0
 static float intensity = 1.0;	// 	any
 

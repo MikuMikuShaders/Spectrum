@@ -39,9 +39,10 @@ texture DepthBuffer : RENDERDEPTHTARGET<
 #if USE_CUSTOM_PARAMS
 static float3 mColorAll = colorAll;
 
-static float mRadius = radius;
 static float mWide = wide;
+static float mRadius = radius;
 static float mAlpha = alpha;
+static float mSpeed = speed;
 static float mIntensity = intensity;
 
 static float mColorTile = colorTile;
@@ -57,6 +58,8 @@ float mWideM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string 
 float mRadiusP : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Radius+";>;
 float mRadiusM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Radius-";>;
 float mAlphaM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Alpha";>;
+float mSpeedP : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Speed+";>;
+float mSpeedM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Speed-";>;
 float mIntensityP : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Intensity+";>;
 float mIntensityM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Intensity-";>;
 
@@ -68,6 +71,7 @@ float mColorTimeH : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; st
 
 static float mWide = lerp(lerp(0.4, 1.0, mWideP), 0.0, mWideM);
 static float mAlpha = lerp(1.0, 0.0, mAlphaM);
+static float mSpeed = lerp(lerp(1.0, 10.0, mSpeedP), 0.0, mSpeedM);
 static float mRadius = lerp(lerp(0.4, 1.0, mRadiusP), 0.0, mRadiusM);
 static float mIntensity = lerp(lerp(1.0, 2.0, mIntensityP), 0.0, mIntensityM);
 static float mColorTile = mColorTileH;
@@ -131,7 +135,7 @@ float4 SoundSpectrumPS(in float2 coord : TEXCOORD0) : COLOR
 {
 	float2 wave = coord * 2 - 1;
 
-    float angle = frac((atan2(wave.y, wave.x) / PI_2) - time / 100);
+    float angle = frac((atan2(wave.y, wave.x) / PI_2) - time / 100 * mSpeed);
     float i = floor(angle * NUM_SAMPLES) / NUM_SAMPLES;
     float f = frac(angle * NUM_SAMPLES);
 
