@@ -33,7 +33,8 @@ static float mAlpha = alpha;
 static float mSpeed = speed;
 static float mWidth = width;
 static float mRadius = radius;
-static float mIntensity = intensity;
+static float mHeightInner = heightInner;
+static float mHeightOuter = heightOuter;
 
 static float mColorTile = colorTile;
 static float mColorTime = colorTime;
@@ -47,8 +48,10 @@ float mWidthP : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string
 float mWidthM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Width-";>;
 float mRadiusP : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Radius+";>;
 float mRadiusM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Radius-";>;
-float mIntensityP : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Intensity+";>;
-float mIntensityM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Intensity-";>;
+float mHeightOuterP : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "HeightOuter+";>;
+float mHeightOuterM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "HeightOuter-";>;
+float mHeightInnerP : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "HeightInner+";>;
+float mHeightInnerM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "HeightInner-";>;
 float mSpeedP : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Speed+";>;
 float mSpeedM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Speed-";>;
 float mAlphaM : CONTROLOBJECT<string name="WaveCircleLineController.pmx"; string item = "Alpha";>;
@@ -63,7 +66,8 @@ static float mAlpha = lerp(1.0, 0.0, mAlphaM);
 static float mSpeed = lerp(lerp(1.0, 10.0, mSpeedP), 0.0, mSpeedM);
 static float mWidth = lerp(lerp(0.4, 1.0, mWidthP), 0.0, mWidthM);
 static float mRadius = lerp(lerp(0.4, 1.0, mRadiusP), 0.0, mRadiusM);
-static float mIntensity = lerp(lerp(1.0, 2.0, mIntensityP), 0.0, mIntensityM);
+static float mHeightInner = lerp(lerp(0.5, 2.0, mHeightInnerP), 0.0, mHeightInnerM);
+static float mHeightOuter = lerp(lerp(0.5, 2.0, mHeightOuterP), 0.0, mHeightOuterM);
 static float mColorTile = mColorTileH;
 static float mColorTime = mColorTimeH;
 
@@ -131,14 +135,14 @@ float4 SoundSpectrumPS(in float2 coord : TEXCOORD0) : COLOR
     float f = frac(angle * NUM_SAMPLES);
 
     float fft = GetFramesFreq(GetFramesPerSecond(time), i);
-	float freq = fft * fft * mIntensity;
+	float freq = fft * fft;
 
     float dist = distance(mTranslate, wave);
 
     float mask = smoothstep(mWidth, mWidth + 0.1, f);
     mask = max(mask, smoothstep(0.1, 0.0, f));
-    mask = max(mask, 1.0 - smoothstep(mRadius, mRadius + 0.01, dist));
-    mask = max(mask, smoothstep(mRadius + freq, mRadius + freq + 0.01, dist));
+    mask = max(mask, 1.0 - smoothstep(mRadius - freq * mHeightInner, mRadius - freq * mHeightInner + 0.01, dist));
+    mask = max(mask, smoothstep(mRadius + freq * mHeightOuter, mRadius + freq * mHeightOuter + 0.01, dist));
     mask = 1 - mask;
 
 	float H = mColorAll.x + mColorTile.x * i + mColorTime.x * time;

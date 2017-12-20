@@ -10,7 +10,8 @@ static float2 position = 0.0; 	// -1.0 ~ 1.0
 static float width = 0.4;		//  0.0 ~ 1.0
 static float speed = 1.0;		//  any
 static float alpha = 1.0;		//  0.0 ~ 1.0
-static float intensity = 1.0;	// 	any
+static float heightInner = 1.0;	// 	any
+static float heightOuter = 1.0;	// 	any
 
 // HSV
 // H = 0 ~ 1
