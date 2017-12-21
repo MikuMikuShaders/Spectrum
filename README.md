@@ -1,5 +1,6 @@
 Spectrum
 ========
+###### [English](https://github.com/MikuMikuShaders/LightBloom/blob/master/README.md) &nbsp; [中文文档](https://github.com/MikuMikuShaders/LightBloom/blob/master/README_chs.md)
 Spectrum is an image effect for MikuMikuDance, this is a very fast technique to achieve audio effect by using FFT texture, and help to adding appropriate lightening and coordinating colors to leave deep impressions
 
 ![Alt](https://raw.githubusercontent.com/MikuMikuShaders/Spectrum/master/Screenshots/preview1.jpg)
