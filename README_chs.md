@@ -1,6 +1,6 @@
 频谱
 ========
-###### [English](https://github.com/MikuMikuShaders/LightBloom/blob/master/README.md) &nbsp; [中文文档](https://github.com/MikuMikuShaders/LightBloom/blob/master/README_chs.md)
+###### [English](https://github.com/MikuMikuShaders/Spectrum/blob/master/README.md) &nbsp; [中文文档](https://github.com/MikuMikuShaders/Spectrum/blob/master/README_chs.md)
 频谱是一个为了mikumikudance编写的图像特效, 该方法主要通过使用FFT转换成纹理来达到快速的音频特效
 
 ![Alt](https://raw.githubusercontent.com/MikuMikuShaders/Spectrum/master/Screenshots/preview1.jpg)
