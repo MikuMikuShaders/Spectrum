@@ -22,19 +22,6 @@ static float2 ViewportOffset  = (float2(0.5,0.5) / ViewportSize);
 static float2 ViewportOffset2 = (float2(1.0,1.0) / ViewportSize);
 static float  ViewportAspect  = ViewportSize.x / ViewportSize.y;
 
-texture ScnMap : RENDERCOLORTARGET <
-	float2 ViewPortRatio = {1.0,1.0};
-	string Format = "R8G8B8";
->;
-sampler ScnSamp = sampler_state {
-	texture = <ScnMap>;
-	MinFilter = POINT; MagFilter = POINT; MipFilter = NONE;
-	AddressU = CLAMP; AddressV = CLAMP;
-};
-texture DepthBuffer : RENDERDEPTHTARGET<
-	float2 ViewportRatio = {1.0,1.0};
-	string Format = "D16";
->;
 texture SpectrumMap<string ResourceName = FFT_MAP_FILE;>; 
 sampler SpectrumMapSamp = sampler_state
 {
