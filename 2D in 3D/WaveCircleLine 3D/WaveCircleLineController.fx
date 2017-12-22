@@ -2,7 +2,7 @@
 #define USE_CUSTOM_PARAMS 0
 
 // How much dots
-#define NUM_SAMPLES 64
+#define NUM_SAMPLES 256
 
 static float radius = 0.4;		//  0.0 ~ 1.0 and above
 

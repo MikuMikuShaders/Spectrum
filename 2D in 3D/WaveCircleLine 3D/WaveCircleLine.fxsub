@@ -62,7 +62,7 @@ static float mAlpha = lerp(1.0, 0.0, mAlphaM);
 static float mSpeed = lerp(lerp(1.0, 10.0, mSpeedP), 0.0, mSpeedM);
 static float mRadius = lerp(lerp(0.4, 1.0, mRadiusP), 0.0, mRadiusM);
 static float mHeightOuter = lerp(lerp(1.0, 2.0, mHeightOuterP), 0.0, mHeightOuterM);
-static float mHeightInner = lerp(lerp(0.25, 1.0, mHeightInnerP), 0.0, mHeightInnerM);
+static float mHeightInner = lerp(lerp(1.0, 2.0, mHeightInnerP), 0.0, mHeightInnerM);
 static float mColorTile = mColorTileH;
 static float mColorTime = mColorTimeH;
 
@@ -129,7 +129,7 @@ float4 SoundSpectrumPS(in float2 coord : TEXCOORD0) : COLOR
     float f = frac(angle * NUM_SAMPLES);
 
     float fft = GetFramesFreq(GetFramesPerSecond(time), i);
-	float freq = fft * fft;
+	float freq = pow(fft, 10);
 
     float dist = distance(0.0, wave);
 

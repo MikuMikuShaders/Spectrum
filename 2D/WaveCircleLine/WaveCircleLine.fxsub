@@ -135,7 +135,7 @@ float4 SoundSpectrumPS(in float2 coord : TEXCOORD0) : COLOR
     float f = frac(angle * NUM_SAMPLES);
 
     float fft = GetFramesFreq(GetFramesPerSecond(time), i);
-	float freq = fft * fft;
+	float freq = pow(fft, 10);
 
     float dist = distance(mTranslate, wave);
 

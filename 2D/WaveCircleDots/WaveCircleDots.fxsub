@@ -128,11 +128,9 @@ float4 SoundSpectrumPS(in float2 coord : TEXCOORD0) : COLOR
 
     float angle = frac((atan2(wave.y - mTranslate.y, wave.x - mTranslate.x) / PI_2) - time / 100 * mSpeed);
     float i = floor(angle * NUM_SAMPLES) / NUM_SAMPLES;
-    float i2 = abs(min(0, (1 - i) * NUM_SAMPLES - 8)) / 8;
     float f = frac(angle * NUM_SAMPLES);
-	float alpha = abs((i - i2) * (NUM_SAMPLES / 8) * 2 - 1);
 
-    float fft = GetFramesFreq(GetFramesPerSecond(time), abs(i * 2 - 1) * 0.75);
+    float fft = GetFramesFreq(GetFramesPerSecond(time), (1 - abs(i * 2 - 1)) * 0.75);
 	float freq = pow(fft, 5) * (1 - fft) * mIntensity;
 
     float dist = distance(mTranslate, wave);
