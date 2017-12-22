@@ -29,7 +29,8 @@ static float mWide = wide;
 static float mRadius = radius;
 static float mAlpha = alpha;
 static float mSpeed = speed;
-static float mHeightOuter = intensity;
+static float mHeightOuter = heightOuter;
+static float mHeightInner = heightInner;
 
 static float mColorTile = colorTile;
 static float mColorTime = colorTime;
