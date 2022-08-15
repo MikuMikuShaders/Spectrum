@@ -17,25 +17,25 @@ Requirements:
 
 Quickstart:
 -----------
-* Download a zip archive from the github page.
+* Download a `.zip` archive from the GitHub page.
 * Un-zip the archive.
-* Put the the `2D/WaveTiles/WaveTiles.x` to the MMD window
-* Put the the `2D/WaveTiles/WaveTilesController.pmx` to the MMD window
-* Load a `Experiment by IQ.wav` from `Media` Folder
-* Click `Play` Button
+* Put the `2D/WaveTiles/WaveTiles.x` in the MMD window
+* Put the `2D/WaveTiles/WaveTilesController.pmx` in the MMD window
+* Load the `Experiment by IQ.wav` from the `Media` Folder
+* Click the `Play` Button
 
 How:
 -----------
-* Put a `Media/Experiment by IQ.wav` to the `Tools` Folder
-* Drag and drop the `wav` onto `run.exe`
-* Wait for output of image
-* You'll get a `Experiment by IQ.wav.fft.png` from the `Tools` folder
+* Put the `Media/Experiment by IQ.wav` in the `Tools` Folder
+* Drag and drop the `.wav` file onto `run.exe`
+* Wait for an output of the image
+* You'll get `Experiment by IQ.wav.fft.png` from the `Tools` folder
 * Rename it to `fft.png`
-* Copy and phase `png` to `WaveTiles/Textures` instead of old texture
+* Copy and paste the `.png` file to `WaveTiles/Textures`, replace of old texture
 
 Contact:
 ------------
-　　If you are a developer using this as part of your love and considering contacting me, you can submit code by `Pull requests` or Feel free to contact me via `twitter` and `issues`, i'll add your profile to team members.
+　　If you are a developer using this and want to contribute, you can submit code by submitting a [`Pull Request`](https://github.com/MikuMikuShaders/Spectrum/compare), or feel free to contact me via [`Twitter`](https://twitter.com/Rui_cg) or [`Issues`](https://github.com/MikuMikuShaders/Spectrum/issues/new/choose) and I'll add your GitHub profile to the team.
 
 * Reach me via Twitter: [@Rui](https://twitter.com/Rui_cg).
 
